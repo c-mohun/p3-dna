@@ -79,25 +79,31 @@ public class LinkStrand implements IDnaStrand{
 
     @Override
     public IDnaStrand reverse() {
-        StringBuilder newBuild = new StringBuilder(myLast.info);
-        newBuild.reverse();
-        LinkStrand newStrand = new LinkStrand(newBuild.toString());
-        Node newNode = new Node (myFirst.info, myFirst.next);
-        ArrayList<Node> newNodeList = new ArrayList<>();
-
-        while (newNode.next == null == false){
-            newNodeList.add(newNode);
-            newNode = newNode.next;
+        Node current = myFirst;
+        if (current == null == true) {
+            return new LinkStrand();
         }
+        current = current.next;
+        StringBuilder final1 = new StringBuilder(myFirst.info);
+        final1 = final1.reverse();
+        Node newFinal = new Node(final1.toString());
 
-        int i = newNodeList.size();
-        while (i>=0){
-            StringBuilder placeHolder = new StringBuilder (newNodeList.get(i).info);
-            placeHolder.reverse();
-            newStrand.append(placeHolder.toString());
+        while (current == null == false) {
+            final1 = new StringBuilder(current.info);
+            final1 = final1.reverse();
+            String reverseString = final1.toString();
+            newFinal = new Node(reverseString, newFinal);
+            current = current.next;
+        }
+        current = newFinal;
+        LinkStrand newStrand = new LinkStrand(current.info);
+        current = current.next;
+        while (current == null == false) {
+            newStrand.append(current.info);
+            current = current.next;
         }
         return newStrand;
-        }
+    }
 
     @Override
     public int getAppendCount() {
@@ -106,38 +112,24 @@ public class LinkStrand implements IDnaStrand{
 
     @Override
     public char charAt(int index) {
-        //must be constant time operation
-        if(0 > index || this.size() <= myIndex){ //invalid index case
-            throw new IndexOutOfBoundsException(""); //out of bounds exception thrown
-        }
-
-        if (index == myIndex + 1 == true){
-            myIndex = index; //updating myIndex
-            if(myLocalIndex + 1 == myCurrent.info.length() == true){
-                myLocalIndex = 0;
-                myCurrent = myCurrent.next;
-                return myCurrent.info.charAt(myLocalIndex);
-            }
-            else{
-                myLocalIndex = myLocalIndex + 1;
-                return myCurrent.info.charAt(myLocalIndex);
-            }
-        }
-
-        else if(index == myIndex + 1 == false){
-            myCurrent = myFirst;
-            for(int i = 0; myCurrent == null == false; i++){
-                for(int x = 0; x < myCurrent.info.length(); x++){
-                    if(i == index == true){
-                        myIndex = i;
-                        myLocalIndex = x;
-                        return myCurrent.info.charAt(x);
-                    }
-
-                }
-                myCurrent = myCurrent.next;
-            }
-        }
-        return 0;
-    }
+        if(0 > index || this.size() <= myIndex) {
+			throw new IndexOutOfBoundsException();
+		}
+		if (myIndex >= index)
+		{
+			myIndex = 0;
+			myLocalIndex = 0;
+			myCurrent = myFirst;
+		}
+		while (index != myIndex)
+		{
+			myIndex += 1;
+			myLocalIndex += 1;
+			if (myCurrent.next != null && myCurrent.info.length()<= myLocalIndex) {
+				myCurrent = myCurrent.next;
+				myLocalIndex = 0;
+			}	
+		}
+		return myCurrent.info.charAt(myLocalIndex);
+	}	
 }
