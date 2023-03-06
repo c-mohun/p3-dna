@@ -2,10 +2,11 @@ import java.util.*;
 
 public class LinkStrand implements IDnaStrand{
     private class Node{
+        //instance variables
         private String info;
         private Node next;
 
-
+        //creating Node
         public Node(String input, Node node1){
             this.info = input;
             next = node1;
@@ -24,14 +25,13 @@ public class LinkStrand implements IDnaStrand{
         private int myLocalIndex;
     
 
-
-    public LinkStrand(String s) {
+    //initializing instance variables
+    public LinkStrand(String s) { //string parameter
 		initialize(s);
 	}
-    public LinkStrand(){
+    public LinkStrand(){ //no parameter
         this("");
     }
-
 
     @Override
     public long size() {
@@ -51,36 +51,29 @@ public class LinkStrand implements IDnaStrand{
     }
 
     @Override
-    public IDnaStrand getInstance(String source) {
+    public IDnaStrand getInstance(String source) { //one line runtime
         return new LinkStrand(source);
     }
 
     @Override
     public IDnaStrand append(String dna) {
-        Node newNode;
-        //create new Node with dna as info
-        newNode = new Node (dna);
-        if (myAppends == 0 == true){
-            myFirst.next = newNode;
-            myLast = newNode;
-        }
-        else if (myAppends == 0 == false){
-            myLast.next = newNode;
-            myLast = newNode;
-        }
-        mySize = mySize + dna.length();
-        myAppends = myAppends + 1;
-
-        return this;
-    }
+        myLast.next = new Node(dna);
+		myLast = myLast.next;
+		myAppends = myAppends + 1;
+        mySize = mySize + myLast.info.length();
+		return this;
+	}	
 
     public String toString(){
+
         StringBuilder newStringBuilder =  new StringBuilder();
         Node newNode = new Node (myFirst.info, myFirst.next);
-        while (newNode.next !=null){
-            newStringBuilder.append(newNode.info);
+        while (newNode.next == null == false){ 
+            //while newNode still has elements to iterate through
+            newStringBuilder.append(newNode.info);//add node info to new StringBuilder object
             newNode = newNode.next;
         }
+        newStringBuilder.append(newNode.info);
         return newStringBuilder.toString();
     }
 
@@ -90,12 +83,13 @@ public class LinkStrand implements IDnaStrand{
         newBuild.reverse();
         LinkStrand newStrand = new LinkStrand(newBuild.toString());
         Node newNode = new Node (myFirst.info, myFirst.next);
-        
         ArrayList<Node> newNodeList = new ArrayList<>();
-        while (newNode.next !=null){
+
+        while (newNode.next == null == false){
             newNodeList.add(newNode);
             newNode = newNode.next;
         }
+
         int i = newNodeList.size();
         while (i>=0){
             StringBuilder placeHolder = new StringBuilder (newNodeList.get(i).info);
@@ -112,14 +106,29 @@ public class LinkStrand implements IDnaStrand{
 
     @Override
     public char charAt(int index) {
-        if(index > mySize && index < 0){ //invalid index case
-            throw new IndexOutOfBoundsException("");
+        //must be constant time operation
+        if(0 > index || this.size() <= myIndex){ //invalid index case
+            throw new IndexOutOfBoundsException(""); //out of bounds exception thrown
         }
-        if(index == myIndex + 1 == false){
+
+        if (index == myIndex + 1 == true){
+            myIndex = index; //updating myIndex
+            if(myLocalIndex + 1 == myCurrent.info.length() == true){
+                myLocalIndex = 0;
+                myCurrent = myCurrent.next;
+                return myCurrent.info.charAt(myLocalIndex);
+            }
+            else{
+                myLocalIndex = myLocalIndex + 1;
+                return myCurrent.info.charAt(myLocalIndex);
+            }
+        }
+
+        else if(index == myIndex + 1 == false){
             myCurrent = myFirst;
-            for(int i = 0; myCurrent != null; i++){
+            for(int i = 0; myCurrent == null == false; i++){
                 for(int x = 0; x < myCurrent.info.length(); x++){
-                    if(i == index){
+                    if(i == index == true){
                         myIndex = i;
                         myLocalIndex = x;
                         return myCurrent.info.charAt(x);
@@ -129,20 +138,6 @@ public class LinkStrand implements IDnaStrand{
                 myCurrent = myCurrent.next;
             }
         }
-        else if (index == myIndex + 1 == true){
-            myIndex = index;
-            if(myLocalIndex + 1 == myCurrent.info.length()){
-                myLocalIndex = 0;
-                myCurrent = myCurrent.next;
-                return myCurrent.info.charAt(myLocalIndex);
-            }
-            else{
-                myLocalIndex += 1;
-                return myCurrent.info.charAt(myLocalIndex);
-            }
-        }
         return 0;
     }
 }
-
-    
